@@ -78,31 +78,28 @@
 </div>
 
 <script>
-    // --- CONFIGURE YOUR LINKS HERE ---
-    const FORM_LINK_A = "https://docs.google.com/forms/d/e/YOUR_FORM_A_ID/viewform"; // Standard Group
-    const FORM_LINK_B = "https://docs.google.com/forms/d/e/YOUR_FORM_B_ID/viewform"; // AR Group
+    // 1. UPDATE THESE WITH YOUR REAL GOOGLE FORM LINKS
+    const FORM_LINK_A = "https://docs.google.com/forms/d/e/YOUR_ACTUAL_ID_A/viewform"; 
+    const FORM_LINK_B = "https://docs.google.com/forms/d/e/YOUR_ACTUAL_ID_B/viewform"; 
 
-    // Randomization logic for BRM Group 7 
+    // 2. Randomization Logic
     let isGroupB = Math.random() < 0.5;
 
     function updateUI() {
         const actionArea = document.getElementById('action-area');
         const surveyLink = document.getElementById('dynamic-survey-link');
-        const overlay = document.getElementById('ar-overlay');
-        const jacket = document.getElementById('jacket-img');
-
-        // Reset AR state
-        overlay.style.display = 'none';
-        jacket.style.opacity = '1';
+        
+        // Safety check: if actionArea is missing, we find it
+        if (!actionArea) return;
 
         if (isGroupB) {
-            // EXPERIMENTAL: Only AR Button
-            actionArea.innerHTML = '<button class="btn btn-ar" onclick="toggleAR()">✨ Try it on with AR</button>';
-            surveyLink.href = "https://forms.gle/qzCxUVusx5F1G3cD7";
+            // EXPERIMENTAL: AR Button [cite: 52]
+            actionArea.innerHTML = '<button class="btn btn-ar" style="display:block; background:#0071e3; color:white;" onclick="toggleAR()">✨ Try it on with AR</button>';
+            surveyLink.href = FORM_LINK_B;
         } else {
-            // CONTROL: Only Add to Bag
-            actionArea.innerHTML = '<button class="btn btn-cart">Add to Bag</button>';
-            surveyLink.href = "https://forms.gle/jLb58fvUubALZFVc6";
+            // CONTROL: Add to Bag [cite: 52]
+            actionArea.innerHTML = '<button class="btn btn-cart" style="display:block; background:#1a1a1a; color:white;">Add to Bag</button>';
+            surveyLink.href = FORM_LINK_A;
         }
     }
 
@@ -123,11 +120,12 @@
         }
     }
 
-    // Initialize Page
-    updateUI();
+    // Initialize UI on load
+    window.onload = updateUI;
 </script>
 
 </body>
 </html>
+
 
 
