@@ -1,90 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> BHUVAN| Shopping Experiment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LuxeVision | Retail Experiment</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
     <style>
-        :root { --main-black: #1a1a1a; --accent-blue: #0071e3; --ar-green: #00ff88; }
-        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: var(--main-black); overflow-x: hidden; }
+        :root { --accent: #0071e3; --success: #00ff88; }
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; overflow-x: hidden; }
         
-        /* Header & Cart */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 1px solid #e5e5e5; background: white; position: sticky; top: 0; z-index: 100; }
+        /* Store UI */
+        .store-header { padding: 15px 40px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; position: sticky; top: 0; z-index: 10; }
+        .product-container { max-width: 1000px; margin: 40px auto; display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; }
+        .image-box { flex: 1; min-width: 300px; background: #f5f5f7; border-radius: 20px; padding: 20px; text-align: center; }
+        .info-box { flex: 1; min-width: 300px; }
         
-        /* Product Layout */
-        .main-content { max-width: 1100px; margin: 40px auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; padding: 0 20px; padding-bottom: 100px; }
-        .image-container { position: relative; background: #f5f5f7; border-radius: 20px; min-height: 450px; display: flex; align-items: center; justify-content: center; }
-        .product-img { max-width: 100%; border-radius: 10px; }
-
         /* Buttons */
-        .btn { display: block; width: 100%; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; margin-bottom: 15px; text-align: center; text-decoration: none; }
-        .btn-cart { background: var(--main-black); color: white; }
-        .btn-ar { background: var(--accent-blue); color: white; box-shadow: 0 4px 15px rgba(0,113,227,0.4); }
+        .btn { display: block; width: 100%; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; margin-bottom: 15px; text-decoration: none; text-align: center; }
+        .btn-black { background: #000; color: #fff; }
+        .btn-blue { background: var(--accent); color: #fff; }
 
-        /* AR Full-Screen Overlay */
-        #ar-experience { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: #000; }
-        .exit-ar { position: absolute; top: 20px; right: 20px; z-index: 2001; padding: 10px 20px; background: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        /* AR View Layer - FIXED: Set to absolute to not block camera */
+        #ar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+        .close-ar { position: absolute; top: 20px; right: 20px; z-index: 1001; padding: 10px 20px; border-radius: 20px; border: none; background: #fff; font-weight: bold; cursor: pointer; }
 
-        /* Survey Footer */
-        .survey-footer { position: fixed; bottom: 0; width: 100%; background: #000; color: #fff; text-align: center; padding: 25px; z-index: 1001; }
-        .survey-link { color: #50e3c2; font-weight: bold; text-decoration: none; border: 1px solid #50e3c2; padding: 8px 20px; border-radius: 5px; margin-left: 15px; }
+        /* Footer */
+        .survey-footer { position: fixed; bottom: 0; width: 100%; background: #000; color: #fff; text-align: center; padding: 20px; z-index: 100; }
+        .survey-link { color: var(--success); font-weight: bold; text-decoration: none; border: 1px solid var(--success); padding: 5px 15px; border-radius: 5px; margin-left: 10px; }
     </style>
 </head>
 <body>
-<div id="ar-experience" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000;">
-    <button class="exit-ar" onclick="closeAR()" style="position: absolute; top: 20px; right: 20px; z-index: 2001; padding: 10px 20px; background: white; border-radius: 20px; font-weight: bold; cursor: pointer;">✕ Exit AR</button>
-    
-    <a-scene embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-        <a-assets><img id="shoeTexture" src="shoe.jpg"></a-assets>
-        
-        <a-curvedimage src="#shoeTexture" height="2" radius="3" theta-length="60" position="0 1.5 -4">
-            <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
-        </a-curvedimage>
 
-        <a-entity camera look-controls></a-entity>
-    </a-scene>
-</div>
+    <div id="ar-overlay">
+        <button class="close-ar" onclick="stopAR()">✕ Exit AR</button>
+        <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false;">
+            <a-assets><img id="shoeAsset" src="shoe.jpg"></a-assets>
+            
+            <a-marker-camera preset="hiro">
+                </a-marker-camera>
+            
+            <a-entity position="0 1.5 -3">
+                <a-image src="#shoeAsset" width="3" height="3" rotation="0 0 0">
+                    <a-animation attribute="rotation" to="0 360 0" dur="8000" repeat="indefinite" easing="linear"></a-animation>
+                </a-image>
+            </a-entity>
+        </a-scene>
+    </div>
 
-<script>
-    const FORM_LINK_A = "YOUR_FORM_A_LINK"; 
-    const FORM_LINK_B = "YOUR_FORM_B_LINK"; 
+    <div class="store-header">
+        <div style="font-size: 20px;">🛒</div>
+        <div style="font-weight: bold; letter-spacing: 1px;">LUXEVISION</div>
+        <div style="width:20px;"></div>
+    </div>
 
-    let isGroupB = Math.random() < 0.5;
+    <div class="product-container">
+        <div class="image-box">
+            <img src="shoe.jpg" style="width: 100%; border-radius: 10px;">
+        </div>
+        <div class="info-box">
+            <p style="color: #888; font-size: 12px; font-weight: bold;">NEW ARRIVAL / GROUP 7</p>
+            <h1>Neon-Pulse Velocity</h1>
+            <p style="font-size: 22px;">₹12,499.00</p>
+            <p style="line-height: 1.6; color: #444;">Experience high-performance design with reactive cushioning technology.</p>
+            
+            <div id="action-area">
+                </div>
+        </div>
+    </div>
 
-    function initExperiment() {
-        const actionArea = document.getElementById('action-area');
-        const surveyBtn = document.getElementById('survey-btn');
+    <div class="survey-footer">
+        Step 2: <a id="survey-link" href="#" target="_blank" class="survey-link">Click here for Survey</a>
+    </div>
 
-        if (isGroupB) {
-            actionArea.innerHTML = '<button class="btn btn-ar" onclick="launchAR()">✨ Try it on with AR</button>';
-            surveyBtn.href = FORM_LINK_B;
-        } else {
-            actionArea.innerHTML = '<button class="btn btn-cart">Add to Bag</button>';
-            surveyBtn.href = FORM_LINK_A;
+    <script>
+        // REPLACE WITH YOUR ACTUAL LINKS
+        const FORM_A = "https://docs.google.com/forms/d/YOUR_LINK_A"; 
+        const FORM_B = "https://docs.google.com/forms/d/YOUR_LINK_B"; 
+
+        // Randomly assign group
+        let isGroupB = Math.random() < 0.5;
+
+        function init() {
+            const area = document.getElementById('action-area');
+            const sLink = document.getElementById('survey-link');
+
+            if (isGroupB) {
+                area.innerHTML = '<button class="btn btn-blue" onclick="startAR()">✨ Try it on with AR</button>';
+                sLink.href = FORM_B;
+            } else {
+                area.innerHTML = '<button class="btn btn-black">Add to Bag</button>';
+                sLink.href = FORM_A;
+            }
         }
-    }
 
-    async function launchAR() {
-        try {
-            // Force browser to ask for camera permission BEFORE showing the scene
-            await navigator.mediaDevices.getUserMedia({ video: true });
-            document.getElementById('ar-experience').style.display = 'block';
-            // Resize scene to ensure it fills the screen
-            document.querySelector('a-scene').resize();
-        } catch (err) {
-            alert("Camera access is blocked. Please enable it in your browser settings to see the AR shoe!");
-            console.error(err);
+        function startAR() {
+            // Check for camera permission first
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(() => {
+                document.getElementById('ar-overlay').style.display = 'block';
+                // AR.js needs a resize trigger to start the camera feed correctly
+                window.dispatchEvent(new Event('resize'));
+            })
+            .catch(err => {
+                alert("Please allow camera access to view the AR shoe.");
+            });
         }
-    }
 
-    function closeAR() {
-        document.getElementById('ar-experience').style.display = 'none';
-        // Refresh page to kill the camera stream properly for the next user
-        location.reload();
-    }
+        function stopAR() {
+            document.getElementById('ar-overlay').style.display = 'none';
+            location.reload(); // Refresh to clean up camera memory
+        }
 
-    window.onload = initExperiment;
-</script>
+        window.onload = init;
+    </script>
 </body>
 </html>
