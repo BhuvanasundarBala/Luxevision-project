@@ -3,129 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxeVision | Premium Outerwear Experiment</title>
+    <title>LuxeVision | Shopping Experiment</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <style>
-        :root { --main-black: #1a1a1a; --soft-grey: #f5f5f7; --accent-blue: #0071e3; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: #fff; color: var(--main-black); padding-bottom: 100px; }
+        :root { --main-black: #1a1a1a; --accent-blue: #0071e3; --ar-green: #00ff88; }
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: var(--main-black); overflow-x: hidden; }
         
-        /* Header & Cart Logo */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 1px solid #e5e5e5; position: sticky; top: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); z-index: 1000; }
-        .cart-icon { font-size: 24px; cursor: pointer; }
-        .logo { font-weight: 700; letter-spacing: 1px; font-size: 20px; }
-
+        /* Header & Cart */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 1px solid #e5e5e5; background: white; position: sticky; top: 0; z-index: 100; }
+        
         /* Product Layout */
-        .main-content { max-width: 1100px; margin: 40px auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; padding: 0 20px; }
-        .image-gallery { position: relative; background: var(--soft-grey); border-radius: 20px; padding: 40px; display: flex; align-items: center; justify-content: center; min-height: 400px; }
-        .product-img { max-width: 100%; height: auto; mix-blend-mode: multiply; transition: 0.3s; }
-        
-        /* AR Overlay */
-        .ar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: rgba(255,255,255,0.9); border-radius: 20px; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
-        .ar-status { font-size: 14px; color: var(--accent-blue); margin-top: 10px; font-weight: 600; }
+        .main-content { max-width: 1100px; margin: 40px auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; padding: 0 20px; padding-bottom: 100px; }
+        .image-container { position: relative; background: #f5f5f7; border-radius: 20px; min-height: 450px; display: flex; align-items: center; justify-content: center; }
+        .product-img { max-width: 100%; border-radius: 10px; }
 
-        /* Product Info */
-        .product-details { padding-top: 20px; }
-        .category { text-transform: uppercase; color: #86868b; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
-        h1 { font-size: 40px; margin: 10px 0; }
-        .price { font-size: 24px; font-weight: 500; margin-bottom: 30px; }
-        
         /* Buttons */
-        .btn { display: block; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; margin-bottom: 15px; text-align: center; text-decoration: none; }
+        .btn { display: block; width: 100%; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; margin-bottom: 15px; text-align: center; text-decoration: none; }
         .btn-cart { background: var(--main-black); color: white; }
-        .btn-ar { background: var(--accent-blue); color: white; }
-        
+        .btn-ar { background: var(--accent-blue); color: white; box-shadow: 0 4px 15px rgba(0,113,227,0.4); }
+
+        /* AR Full-Screen Overlay */
+        #ar-experience { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: #000; }
+        .exit-ar { position: absolute; top: 20px; right: 20px; z-index: 2001; padding: 10px 20px; background: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
+
         /* Survey Footer */
-        .survey-footer { position: fixed; bottom: 0; width: 100%; background: #000; color: #fff; text-align: center; padding: 25px; font-size: 16px; z-index: 1001; }
+        .survey-footer { position: fixed; bottom: 0; width: 100%; background: #000; color: #fff; text-align: center; padding: 25px; z-index: 1001; }
         .survey-link { color: #50e3c2; font-weight: bold; text-decoration: none; border: 1px solid #50e3c2; padding: 8px 20px; border-radius: 5px; margin-left: 15px; }
     </style>
 </head>
 <body>
 
+<div id="ar-experience">
+    <button class="exit-ar" onclick="closeAR()">✕ Exit AR</button>
+    <a-scene embedded vr-mode-ui="enabled: false">
+        <a-assets><img id="shoeTexture" src="shoe.jpg"></a-assets>
+        
+        <a-curvedimage src="#shoeTexture" height="2.5" radius="3" theta-length="60" position="0 1.5 -5">
+            <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
+        </a-curvedimage>
+
+        <a-entity camera look-controls></a-entity>
+    </a-scene>
+</div>
+
 <div class="header">
-    <div class="cart-icon">🛒</div>
-    <div class="logo">LUXEVISION</div>
+    <div style="font-size: 24px;">🛒</div>
+    <div style="font-weight: 700; letter-spacing: 1px;">LUXEVISION</div>
     <div style="width:24px;"></div>
 </div>
 
 <div class="main-content">
-    <div class="image-gallery">
-        <img id="jacket-img" src="Jacket.png" class="product-img" alt="Varsity Jacket">
-        
-        <div id="ar-overlay" class="ar-overlay">
-            <div style="font-size: 50px;">🕶️</div>
-            <div class="ar-status">Virtual Try-on Active</div>
-            <p style="padding: 0 40px; text-align: center; font-size: 14px;">Experimental AR View: 3D Visualization Enabled.</p>
-            <button onclick="toggleAR()" style="background:none; border: 1px solid #000; padding: 5px 15px; border-radius: 20px; cursor:pointer;">Exit AR Mode</button>
-        </div>
+    <div class="image-container">
+        <img src="shoe.jpg" class="product-img" alt="Neon-Pulse Shoe">
     </div>
 
     <div class="product-details">
-        <span class="category">Outerwear / Group 7 Project</span>
-        <h1>Urban Varsity Jacket</h1>
-        <p class="price">₹4,999.00</p>
-        <p style="color: #424245; line-height: 1.5; margin-bottom: 30px;">Premium quality contrast sleeves with a contemporary fit. Designed for ultimate comfort and style.</p>
+        <span style="color: #86868b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Performance / Topic 7</span>
+        <h1>Neon-Pulse Velocity</h1>
+        <p style="font-size: 24px; font-weight: 500;">₹12,499.00</p>
+        <p style="color: #424245; line-height: 1.6; margin-bottom: 40px;">Experience the next generation of footwear with bio-luminescent technology and reactive cushioning.</p>
         
         <div id="action-area"></div>
         
-        <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px;">
-             <button onclick="debugSwitch()" style="font-size: 10px; background: none; border: 1px solid #ddd; cursor: pointer; color: #ccc;">Admin: Switch Group A/B</button>
-        </div>
+        <button onclick="toggleGroup()" style="margin-top: 50px; font-size: 10px; background: none; border: 1px solid #ddd; cursor: pointer; color: #ccc;">(Admin: Test Group Toggle)</button>
     </div>
 </div>
 
 <div class="survey-footer">
-    Step 1: Interact with the product above. Step 2: 
-    <a id="dynamic-survey-link" href="#" target="_blank" class="survey-link">Survey Link</a>
+    Done exploring? <a id="survey-btn" href="#" target="_blank" class="survey-link">Survey Link</a>
 </div>
 
 <script>
-    // 1. UPDATE THESE WITH YOUR REAL GOOGLE FORM LINKS
-    const FORM_LINK_A = "https://docs.google.com/forms/d/e/YOUR_ACTUAL_ID_A/viewform"; 
-    const FORM_LINK_B = "https://docs.google.com/forms/d/e/YOUR_ACTUAL_ID_B/viewform"; 
+    // --- CONFIGURE YOUR GOOGLE FORM LINKS HERE ---
+    const FORM_A = "https://docs.google.com/forms/d/e/YOUR_FORM_A/viewform"; // Standard
+    const FORM_B = "https://docs.google.com/forms/d/e/YOUR_FORM_B/viewform"; // AR
 
-    // 2. Randomization Logic
+    // Randomizer logic
     let isGroupB = Math.random() < 0.5;
 
-    function updateUI() {
+    function initExperiment() {
         const actionArea = document.getElementById('action-area');
-        const surveyLink = document.getElementById('dynamic-survey-link');
-        
-        // Safety check: if actionArea is missing, we find it
-        if (!actionArea) return;
+        const surveyBtn = document.getElementById('survey-btn');
 
         if (isGroupB) {
-            // EXPERIMENTAL: AR Button [cite: 52]
-            actionArea.innerHTML = '<button class="btn btn-ar" style="display:block; background:#0071e3; color:white;" onclick="toggleAR()">✨ Try it on with AR</button>';
-            surveyLink.href = FORM_LINK_B;
+            // Group B: Experimental AR
+            actionArea.innerHTML = '<button class="btn btn-ar" onclick="launchAR()">✨ Try it on with AR</button>';
+            surveyBtn.href = FORM_B;
         } else {
-            // CONTROL: Add to Bag [cite: 52]
-            actionArea.innerHTML = '<button class="btn btn-cart" style="display:block; background:#1a1a1a; color:white;">Add to Bag</button>';
-            surveyLink.href = FORM_LINK_A;
+            // Group A: Control Standard
+            actionArea.innerHTML = '<button class="btn btn-cart">Add to Bag</button>';
+            surveyBtn.href = FORM_A;
         }
     }
 
-    function debugSwitch() {
+    function launchAR() {
+        document.getElementById('ar-experience').style.display = 'block';
+        alert("Enabling Camera Access for AR Visualization...");
+    }
+
+    function closeAR() {
+        document.getElementById('ar-experience').style.display = 'none';
+    }
+
+    function toggleGroup() {
         isGroupB = !isGroupB;
-        updateUI();
+        initExperiment();
     }
 
-    function toggleAR() {
-        const overlay = document.getElementById('ar-overlay');
-        const jacket = document.getElementById('jacket-img');
-        if (overlay.style.display === 'flex') {
-            overlay.style.display = 'none';
-            jacket.style.opacity = '1';
-        } else {
-            overlay.style.display = 'flex';
-            jacket.style.opacity = '0.1';
-        }
-    }
-
-    // Initialize UI on load
-    window.onload = updateUI;
+    // Run on load
+    window.onload = initExperiment;
 </script>
 
 </body>
 </html>
-
-
-
