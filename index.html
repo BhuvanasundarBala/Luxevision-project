@@ -3,172 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUXEVISION | NEXT-GEN FOOTWEAR</title>
+    <title>LUXEVISION | CYBER-RETAIL</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <style>
-        :root {
-            --neon-blue: #00d2ff;
-            --neon-purple: #9d50bb;
-            --neon-green: #00ff88;
-            --dark-bg: #050505;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
+        :root { --neon-blue: #00f2ff; --neon-pink: #ff00ff; --neon-green: #00ff88; --bg: #050505; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        
+        /* Glassmorphism Header */
+        .header { display: flex; justify-content: space-between; padding: 20px 40px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 900; letter-spacing: 5px; background: linear-gradient(to right, var(--neon-blue), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 22px; }
 
-        body {
-            margin: 0;
-            background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Inter', -apple-system, sans-serif;
-            overflow-x: hidden;
-        }
+        /* Main Grid Layout */
+        .main-grid { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; padding: 20px; padding-bottom: 120px; }
+        
+        /* Neon Product Card */
+        .image-card { position: relative; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 40px; text-align: center; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .shoe-img { width: 100%; border-radius: 20px; filter: drop-shadow(0 0 15px rgba(0,242,255,0.3)); transform: rotate(-10deg); transition: 0.5s; z-index: 1; position: relative; }
+        .image-card:hover .shoe-img { transform: rotate(0deg) scale(1.05); }
+        
+        /* Cyber Details */
+        .details h2 { color: var(--neon-blue); letter-spacing: 3px; font-size: 14px; }
+        .details h1 { font-size: 50px; margin: 10px 0; line-height: 1; }
+        .price { font-size: 32px; color: var(--neon-pink); font-weight: bold; margin: 20px 0; }
+        .desc { color: #888; line-height: 1.8; margin-bottom: 30px; }
 
-        /* Animated Gradient Background */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
-            z-index: -1;
-        }
+        /* Action Buttons */
+        .btn { display: block; width: 100%; padding: 22px; border-radius: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; border: none; transition: 0.3s; }
+        .btn-neon { background: transparent; color: var(--neon-blue); border: 2px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
+        .btn-neon:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px var(--neon-blue); }
+        .btn-standard { background: white; color: black; }
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 210, 255, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* AR Experience Overlay */
+        #ar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: #000; }
+        .close-ar { position: absolute; top: 30px; right: 30px; z-index: 2001; background: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-weight: bold; cursor: pointer; }
 
-        .logo {
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 22px;
-            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
-        }
-
-        /* Main Layout */
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            padding: 20px;
-        }
-
-        .product-card {
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .image-glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 80%; height: 60%;
-            background: var(--neon-blue);
-            filter: blur(80px);
-            opacity: 0.2;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-        }
-
-        .shoe-img {
-            width: 100%;
-            border-radius: 20px;
-            transform: rotate(-5deg);
-            transition: 0.5s ease;
-        }
-
-        .product-card:hover .shoe-img {
-            transform: rotate(0deg) scale(1.05);
-        }
-
-        /* Neon Buttons */
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 15px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: 0.3s;
-            border: none;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .btn-standard {
-            background: white;
-            color: black;
-        }
-
-        .btn-neon {
-            background: transparent;
-            color: var(--neon-blue);
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-        }
-
-        .btn-neon:hover {
-            background: var(--neon-blue);
-            color: black;
-            box-shadow: 0 0 30px var(--neon-blue);
-        }
-
-        /* Footer Bar */
-        .survey-bar {
-            position: fixed;
-            bottom: 0; width: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 25px;
-            border-top: 1px solid var(--neon-green);
-            text-align: center;
-            z-index: 1001;
-        }
-
-        .link-neon {
-            color: var(--neon-green);
-            text-decoration: none;
-            border: 1px solid var(--neon-green);
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-        }
-
-        /* AR Overlay */
-        #ar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black;
-            z-index: 2000;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 30px; right: 30px;
-            background: white; color: black;
-            border-radius: 50%; width: 50px; height: 50px;
-            border: none; font-weight: bold; z-index: 2001;
-        }
+        /* Fixed Survey Footer */
+        .footer { position: fixed; bottom: 0; width: 100%; padding: 25px; background: rgba(0,0,0,0.9); border-top: 1px solid var(--neon-green); text-align: center; z-index: 1001; backdrop-filter: blur(10px); }
+        .survey-link { color: var(--neon-green); border: 1px solid var(--neon-green); padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; letter-spacing: 1px; transition: 0.3s; }
+        .survey-link:hover { background: var(--neon-green); color: black; box-shadow: 0 0 20px var(--neon-green); }
     </style>
 </head>
 <body>
@@ -179,80 +51,86 @@
     <div style="width: 24px;"></div>
 </div>
 
-<div class="container">
-    <div class="product-card">
-        <div class="image-glow"></div>
-        <img src="shoe.jpg" alt="Neon Shoe" class="shoe-img">
+<div class="main-grid">
+    <div class="image-card">
+        <img src="shoe.jpg" class="shoe-img" alt="Neon Velocity Shoe">
     </div>
-
-    <div class="info-section">
-        <h2 style="color: var(--neon-blue); letter-spacing: 2px;">PERFORMANCE LINE</h2>
-        <h1 style="font-size: 50px; margin: 10px 0;">NEON PULSE<br>VELOCITY</h1>
-        <p style="font-size: 28px; color: var(--neon-purple); font-weight: bold;">₹12,499.00</p>
-        <p style="color: #aaa; line-height: 1.8;">Integrated bio-luminescent fiber optics with haptic feedback soles. Engineered for those who live in the future.</p>
+    <div class="details">
+        <h2>EXPERIMENTAL UNIT 07</h2>
+        <h1>NEON-PULSE<br>VELOCITY</h1>
+        <p class="price">₹12,499.00</p>
+        <p class="desc">Integrated bio-luminescent fiber optics with haptic feedback soles. Experience the peak of performance engineering.</p>
         
         <div id="action-area"></div>
         
-        <button onclick="toggleTest()" style="margin-top: 40px; background: none; border: 1px solid #333; color: #444; cursor: pointer; border-radius: 5px; font-size: 10px;">TEST TOGGLE</button>
+        <button onclick="toggleTest()" style="margin-top: 50px; background:none; border: 1px solid #222; color: #333; cursor: pointer; font-size: 10px; border-radius: 5px; padding: 5px 10px;">TEST TOGGLE (GROUP A/B)</button>
     </div>
 </div>
 
-<div class="survey-bar">
-    <span style="margin-right: 20px;">EXPERIMENT COMPLETE?</span>
-    <a id="survey-link" href="#" target="_blank" class="link-neon">OPEN SURVEY</a>
+<div class="footer">
+    <a id="survey-link" href="#" target="_blank" class="survey-link">PROCEED TO SURVEY</a>
 </div>
 
 <div id="ar-overlay">
-    <button class="close-btn" onclick="stopAR()">✕</button>
+    <button class="close-ar" onclick="stopAR()">✕</button>
     <a-scene embedded vr-mode-ui="enabled: false">
         <a-assets><img id="shoeAsset" src="shoe.jpg"></a-assets>
-        <a-curvedimage src="#shoeAsset" height="2.5" radius="3" theta-length="60" position="0 1.5 -5">
-            <a-animation attribute="rotation" to="0 360 0" dur="8000" repeat="indefinite" easing="linear"></a-animation>
-        </a-curvedimage>
+        <a-entity position="0 1.5 -4">
+            <a-curvedimage src="#shoeAsset" height="2.5" radius="3.5" theta-length="90" rotation="0 135 0">
+                <a-animation attribute="rotation" to="0 495 0" dur="8000" repeat="indefinite" easing="linear"></a-animation>
+            </a-curvedimage>
+            <a-ring color="#00ff88" radius-inner="2.4" radius-outer="2.5" rotation="-90 0 0" position="0 -1.5 0">
+                <a-animation attribute="scale" from="1 1 1" to="1.1 1.1 1.1" dur="1000" direction="alternate" repeat="indefinite"></a-animation>
+            </a-ring>
+        </a-entity>
         <a-entity camera look-controls></a-entity>
     </a-scene>
 </div>
 
 <script>
-    const LINK_A = "YOUR_FORM_A_LINK"; 
-    const LINK_B = "YOUR_FORM_B_LINK";
+    // 1. UPDATE WITH YOUR ACTUAL GOOGLE FORM LINKS
+    const FORM_A = "https://docs.google.com/forms/d/e/YOUR_LINK_A/viewform"; 
+    const FORM_B = "https://docs.google.com/forms/d/e/YOUR_LINK_B/viewform"; 
 
-    let isARGroup = Math.random() < 0.5;
+    // 2. Randomizer for 30-40 participants
+    let isAR = Math.random() < 0.5;
 
-    function renderPage() {
+    function render() {
         const area = document.getElementById('action-area');
         const link = document.getElementById('survey-link');
-
-        if (isARGroup) {
-            area.innerHTML = '<button class="btn btn-neon" onclick="startAR()">✨ LAUNCH AR TRY-ON</button>';
-            link.href = LINK_B;
+        
+        if (isAR) {
+            // Group B: Experimental AR View
+            area.innerHTML = '<button class="btn btn-neon" onclick="startAR()">✨ LAUNCH 360° AR TRY-ON</button>';
+            link.href = FORM_B;
         } else {
+            // Group A: Control Standard View
             area.innerHTML = '<button class="btn btn-standard">ADD TO BAG</button>';
-            link.href = LINK_A;
+            link.href = FORM_A;
         }
     }
 
     async function startAR() {
         try {
+            // Explicitly request camera permissions
             await navigator.mediaDevices.getUserMedia({ video: true });
             document.getElementById('ar-overlay').style.display = 'block';
             document.querySelector('a-scene').resize();
         } catch (e) {
-            alert("Camera needed for AR mode.");
+            alert("Camera access is required for the AR experience.");
         }
     }
 
     function stopAR() {
         document.getElementById('ar-overlay').style.display = 'none';
+        // Reload to reset the randomizer and camera stream properly
         location.reload();
     }
 
-    function toggleTest() {
-        isARGroup = !isARGroup;
-        renderPage();
-    }
+    // For Testing Purposes
+    function toggleTest() { isAR = !isAR; render(); }
 
-    window.onload = renderPage;
+    window.onload = render;
 </script>
 
 </body>
