@@ -2,135 +2,180 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUXEVISION | CYBER-RETAIL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LUXEVISION | NEXT-GEN RETAIL</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
     <style>
-        :root { --neon-blue: #00f2ff; --neon-pink: #ff00ff; --neon-green: #00ff88; --bg: #050505; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        :root { 
+            --neon-blue: #00f2ff; 
+            --neon-purple: #bc13fe; 
+            --neon-green: #00ff88; 
+            --cyber-black: #020202;
+        }
+
+        body { 
+            margin: 0; 
+            background: var(--cyber-black); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+        }
+
+        /* Dashing Neon Header */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; background: rgba(0,0,0,0.9);
+            border-bottom: 1px solid var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .logo { 
+            font-weight: 900; letter-spacing: 5px; font-size: 20px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Product Showcase */
+        .showcase { 
+            max-width: 1200px; margin: 40px auto; 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 40px; padding: 20px; padding-bottom: 140px;
+        }
+
+        .hero-card { 
+            background: linear-gradient(145deg, #0f0f0f, #050505);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 40px; padding: 60px; text-align: center;
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,1);
+        }
+
+        .shoe-display { 
+            width: 100%; filter: drop-shadow(0 0 25px var(--neon-blue));
+            transform: rotate(-15deg); transition: 0.7s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .hero-card:hover .shoe-display { transform: rotate(0deg) scale(1.15); }
+
+        /* Dynamic UI Elements */
+        .price-tag { font-size: 38px; font-weight: 800; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); }
         
-        /* Glassmorphism Header */
-        .header { display: flex; justify-content: space-between; padding: 20px 40px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 900; letter-spacing: 5px; background: linear-gradient(to right, var(--neon-blue), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 22px; }
+        .btn { 
+            display: block; width: 100%; padding: 22px; border-radius: 18px; 
+            font-weight: 900; text-transform: uppercase; letter-spacing: 3px; 
+            cursor: pointer; border: none; transition: 0.4s;
+        }
 
-        /* Main Grid Layout */
-        .main-grid { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; padding: 20px; padding-bottom: 120px; }
-        
-        /* Neon Product Card */
-        .image-card { position: relative; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 40px; text-align: center; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .shoe-img { width: 100%; border-radius: 20px; filter: drop-shadow(0 0 15px rgba(0,242,255,0.3)); transform: rotate(-10deg); transition: 0.5s; z-index: 1; position: relative; }
-        .image-card:hover .shoe-img { transform: rotate(0deg) scale(1.05); }
-        
-        /* Cyber Details */
-        .details h2 { color: var(--neon-blue); letter-spacing: 3px; font-size: 14px; }
-        .details h1 { font-size: 50px; margin: 10px 0; line-height: 1; }
-        .price { font-size: 32px; color: var(--neon-pink); font-weight: bold; margin: 20px 0; }
-        .desc { color: #888; line-height: 1.8; margin-bottom: 30px; }
+        .btn-ar { 
+            background: transparent; color: var(--neon-blue); border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0,242,255,0.2); margin-top: 20px;
+        }
 
-        /* Action Buttons */
-        .btn { display: block; width: 100%; padding: 22px; border-radius: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; border: none; transition: 0.3s; }
-        .btn-neon { background: transparent; color: var(--neon-blue); border: 2px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-        .btn-neon:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px var(--neon-blue); }
-        .btn-standard { background: white; color: black; }
+        .btn-ar:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 40px var(--neon-blue); }
 
-        /* AR Experience Overlay */
-        #ar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: #000; }
-        .close-ar { position: absolute; top: 30px; right: 30px; z-index: 2001; background: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-weight: bold; cursor: pointer; }
+        /* Full Screen AR View */
+        #ar-viewport { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; }
+        .ar-exit { position: absolute; top: 30px; right: 30px; z-index: 2001; padding: 15px 25px; background: #fff; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; }
 
-        /* Fixed Survey Footer */
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 25px; background: rgba(0,0,0,0.9); border-top: 1px solid var(--neon-green); text-align: center; z-index: 1001; backdrop-filter: blur(10px); }
-        .survey-link { color: var(--neon-green); border: 1px solid var(--neon-green); padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; letter-spacing: 1px; transition: 0.3s; }
-        .survey-link:hover { background: var(--neon-green); color: black; box-shadow: 0 0 20px var(--neon-green); }
+        /* Survey Bottom Bar */
+        .survey-bar { 
+            position: fixed; bottom: 0; width: 100%; padding: 25px; 
+            background: rgba(0,0,0,0.95); border-top: 2px solid var(--neon-green);
+            text-align: center; z-index: 1001; backdrop-filter: blur(20px);
+        }
+
+        .survey-btn { 
+            color: var(--neon-green); border: 2px solid var(--neon-green); 
+            padding: 12px 40px; border-radius: 50px; text-decoration: none; 
+            font-weight: bold; text-transform: uppercase; box-shadow: 0 0 15px rgba(0,255,136,0.2);
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div style="font-size: 24px;">🛒</div>
+    <div style="font-size: 24px;">✦</div>
     <div class="logo">LUXEVISION</div>
     <div style="width: 24px;"></div>
 </div>
 
-<div class="main-grid">
-    <div class="image-card">
-        <img src="shoe.jpg" class="shoe-img" alt="Neon Velocity Shoe">
+<div class="showcase">
+    <div class="hero-card">
+        <img src="shoe.jpg" class="shoe-display" alt="Velocity Shoe">
     </div>
-    <div class="details">
-        <h2>EXPERIMENTAL UNIT 07</h2>
-        <h1>NEON-PULSE<br>VELOCITY</h1>
-        <p class="price">₹12,499.00</p>
-        <p class="desc">Integrated bio-luminescent fiber optics with haptic feedback soles. Experience the peak of performance engineering.</p>
-        
-        <div id="action-area"></div>
-        
-        <button onclick="toggleTest()" style="margin-top: 50px; background:none; border: 1px solid #222; color: #333; cursor: pointer; font-size: 10px; border-radius: 5px; padding: 5px 10px;">TEST TOGGLE (GROUP A/B)</button>
+    <div class="product-info">
+        <h3 style="color: var(--neon-blue); letter-spacing: 4px;">SERIES 07 / AR-READY</h3>
+        <h1 style="font-size: 55px; line-height: 0.9; margin: 15px 0;">NEON PULSE<br>VELOCITY</h1>
+        <p class="price-tag">₹12,499.00</p>
+        <p style="color: #888; line-height: 1.8; font-size: 18px; margin-bottom: 30px;">
+            The world's first interactive footwear. Scan to see the 360° neon fiber-optic integration in your room.
+        </p>
+        <div id="logic-gate"></div>
     </div>
 </div>
 
-<div class="footer">
-    <a id="survey-link" href="#" target="_blank" class="survey-link">PROCEED TO SURVEY</a>
+<div class="survey-bar">
+    <a id="survey-link" href="#" target="_blank" class="survey-btn">Final Step: Complete Survey</a>
 </div>
 
-<div id="ar-overlay">
-    <button class="close-ar" onclick="stopAR()">✕</button>
-    <a-scene embedded vr-mode-ui="enabled: false">
-        <a-assets><img id="shoeAsset" src="shoe.jpg"></a-assets>
-        <a-entity position="0 1.5 -4">
-            <a-curvedimage src="#shoeAsset" height="2.5" radius="3.5" theta-length="90" rotation="0 135 0">
-                <a-animation attribute="rotation" to="0 495 0" dur="8000" repeat="indefinite" easing="linear"></a-animation>
+<div id="ar-viewport">
+    <button class="ar-exit" onclick="exitAR()">✕ EXIT</button>
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false;">
+        <a-assets><img id="shoeTexture" src="shoe.jpg"></a-assets>
+        
+        <a-entity position="0 1.6 -3">
+            <a-curvedimage src="#shoeTexture" height="2.5" radius="3" theta-length="90" rotation="0 135 0">
+                <a-animation attribute="rotation" to="0 495 0" dur="7000" repeat="indefinite" easing="linear"></a-animation>
             </a-curvedimage>
-            <a-ring color="#00ff88" radius-inner="2.4" radius-outer="2.5" rotation="-90 0 0" position="0 -1.5 0">
-                <a-animation attribute="scale" from="1 1 1" to="1.1 1.1 1.1" dur="1000" direction="alternate" repeat="indefinite"></a-animation>
+            <a-ring color="#00ff88" radius-inner="2" radius-outer="2.1" rotation="-90 0 0" position="0 -1.4 0">
+                <a-animation attribute="scale" from="1 1 1" to="1.2 1.2 1.2" dur="800" direction="alternate" repeat="indefinite"></a-animation>
             </a-ring>
         </a-entity>
+
         <a-entity camera look-controls></a-entity>
     </a-scene>
 </div>
 
 <script>
-    // 1. UPDATE WITH YOUR ACTUAL GOOGLE FORM LINKS
-    const FORM_A = "https://docs.google.com/forms/d/e/YOUR_LINK_A/viewform"; 
-    const FORM_B = "https://docs.google.com/forms/d/e/YOUR_LINK_B/viewform"; 
+    // --- UPDATE YOUR GOOGLE FORM LINKS HERE ---
+    const GROUP_A_FORM = "YOUR_FORM_A_LINK"; 
+    const GROUP_B_FORM = "YOUR_FORM_B_LINK";
 
-    // 2. Randomizer for 30-40 participants
-    let isAR = Math.random() < 0.5;
+    // Randomize for Group 7 Project
+    let isARGroup = Math.random() < 0.5;
 
-    function render() {
-        const area = document.getElementById('action-area');
+    function init() {
+        const gate = document.getElementById('logic-gate');
         const link = document.getElementById('survey-link');
         
-        if (isAR) {
-            // Group B: Experimental AR View
-            area.innerHTML = '<button class="btn btn-neon" onclick="startAR()">✨ LAUNCH 360° AR TRY-ON</button>';
-            link.href = FORM_B;
+        if (isARGroup) {
+            gate.innerHTML = '<button class="btn btn-ar" onclick="launchAR()">✨ VIEW IN YOUR SPACE (360°)</button>';
+            link.href = GROUP_B_FORM;
         } else {
-            // Group A: Control Standard View
-            area.innerHTML = '<button class="btn btn-standard">ADD TO BAG</button>';
-            link.href = FORM_A;
+            gate.innerHTML = '<button class="btn" style="background:white; color:black;">ADD TO BAG</button>';
+            link.href = GROUP_A_FORM;
         }
     }
 
-    async function startAR() {
+    async function launchAR() {
         try {
-            // Explicitly request camera permissions
             await navigator.mediaDevices.getUserMedia({ video: true });
-            document.getElementById('ar-overlay').style.display = 'block';
+            document.getElementById('ar-viewport').style.display = 'block';
             document.querySelector('a-scene').resize();
         } catch (e) {
-            alert("Camera access is required for the AR experience.");
+            alert("Camera permission is required for the AR Try-On.");
         }
     }
 
-    function stopAR() {
-        document.getElementById('ar-overlay').style.display = 'none';
-        // Reload to reset the randomizer and camera stream properly
-        location.reload();
+    function exitAR() {
+        document.getElementById('ar-viewport').style.display = 'none';
+        location.reload(); // Ensures clean camera reset for the next participant
     }
 
-    // For Testing Purposes
-    function toggleTest() { isAR = !isAR; render(); }
-
-    window.onload = render;
+    window.onload = init;
 </script>
 
 </body>
